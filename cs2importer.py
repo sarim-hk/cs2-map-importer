@@ -6,6 +6,9 @@ from PyQt5.QtWidgets import *
 import re
 import traceback
 import sys
+import subprocess
+import os
+import shutil
 
 class Importer(QMainWindow, Interface):
     def __init__(self):
@@ -65,6 +68,15 @@ class Importer(QMainWindow, Interface):
         self.map_name = temp.pop().split(".vmf")[0]
         self.vmf_folder = "/".join(temp) + "/"
 
+        if self.vmf_folder.endswith("/maps/"):
+            self.vmf_folder = "/".join(self.vmf_folder.split("/")[:-2])
+        else:
+            maps_dir = f"{self.vmf_folder}/maps/"
+            os.mkdir(maps_dir)
+            copy_from = self.vmf_folder + self.map_name + ".vmf"
+            shutil.copy(copy_from, maps_dir)
+
+
         self.vmf_label.setText(path)
         self.vmf_label.setStyleSheet("background-color:rgb(0, 255, 0)")
 
@@ -101,6 +113,7 @@ class Importer(QMainWindow, Interface):
             if bool(self.config_checkbox.checkState()):
                 self.save_to_cfg()
 
+            cd = self.csgo_basefolder + '/game/csgo/import_scripts'
             command = "python import_map_community.py "
             command += '"' + self.csgo_basefolder + '/csgo/' + '" '
             command += '"' + self.vmf_folder + '" '
@@ -108,9 +121,12 @@ class Importer(QMainWindow, Interface):
             command += '"' + self.addon + '" '
             command += '"' + self.map_name + '" '
             command += self.launch_options
+
             print(command)
+            subprocess.Popen(command, cwd=cd)
 
         except Exception as e:
+            print(e)
             QMessageBox.critical(self, "Error", str(traceback.format_exc()))
 
 if __name__ == "__main__":
