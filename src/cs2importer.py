@@ -77,7 +77,7 @@ class Importer(QMainWindow, Interface):
                 os.mkdir(maps_dir)
             except Exception as e:
                 print(e)
-                
+
             copy_from = self.vmf_folder + self.map_name + ".vmf"
             shutil.copy(copy_from, maps_dir)
 
@@ -103,11 +103,21 @@ class Importer(QMainWindow, Interface):
             f.write(temp)
 
     def load_from_cfg(self):
-        with open("cs2importer.cfg", "r") as f:
-            temp = f.readlines()
-            print(temp)
-            if not temp:
-                return
+        try:
+            with open("cs2importer.cfg", "r") as f:
+                temp = f.readlines()
+                print(temp)
+                if not temp:
+                    return
+
+        except FileNotFoundError:
+            open("cs2importer.cfg", "w")
+            with open("cs2importer.cfg", "r") as f:
+                temp = f.readlines()
+                print(temp)
+                if not temp:
+                    return
+
 
         self.set_launch_options(temp[0].strip())
         self.set_csgo_folder(temp[1].strip())
