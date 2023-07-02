@@ -72,7 +72,12 @@ class Importer(QMainWindow, Interface):
             self.vmf_folder = "/".join(self.vmf_folder.split("/")[:-2])
         else:
             maps_dir = f"{self.vmf_folder}/maps/"
-            os.mkdir(maps_dir)
+
+            try:
+                os.mkdir(maps_dir)
+            except Exception as e:
+                print(e)
+                
             copy_from = self.vmf_folder + self.map_name + ".vmf"
             shutil.copy(copy_from, maps_dir)
 
