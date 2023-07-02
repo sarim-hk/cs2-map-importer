@@ -112,7 +112,7 @@ class Importer(QMainWindow, Interface):
 
     def load_from_cfg(self):
         if not os.path.isfile("cs2importer.cfg"):
-            open("cs2importer.cfg, w").close()
+            open("cs2importer.cfg", "w").close()
 
         with open("cs2importer.cfg", "r") as f:
             temp = f.readlines()

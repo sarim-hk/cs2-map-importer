@@ -4,7 +4,6 @@ rmdir release
 
 :: BUILD RELEASE FILES
 pyinstaller --onefile src/cs2importer.py
-type nul >dist/cs2importer.cfg
 
 ::: ZIP RELEASE FILES
 ren dist cs2importer
