@@ -1,2 +1,4 @@
 *.pyc
-cs2importer.cfg
+*.spec
+build
+dist
