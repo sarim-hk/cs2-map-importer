@@ -9,6 +9,7 @@ import sys
 import subprocess
 import os
 import shutil
+import tempfile
 
 class Importer(QMainWindow, Interface):
     def __init__(self):
@@ -70,24 +71,28 @@ class Importer(QMainWindow, Interface):
 
         # if path doesnt end with /maps
         if not self.vmf_folder.endswith("/maps"):
+            temp_dir = tempfile.gettempdir()
 
-            # check if theres a subfolder that ends with /maps
-            if os.path.exists(self.vmf_folder + "/maps"):
-                print(self.vmf_folder)
-
-                # then delete vmf in /maps if exists, as maybe it isnt the newest ver
-                if os.path.isfile(self.vmf_folder  + "/maps" + self.map_name + ".vmf"):
-                    os.remove(self.vmf_folder  + "/maps" + self.map_name + ".vmf")
-
-            # otherwise (if there isnt a /maps subfolder), create one
+            # check if /maps is in temp already, otherwise create it
+            if not os.path.exists(temp_dir + "/maps"):
+                os.mkdir(temp_dir + "/maps")
+            
+            # delete vmf in /maps if exists, as maybe it isnt the newest ver. 
+            # only need to do this if /maps wasnt just created.
             else:
-                os.mkdir(self.vmf_folder + "/maps")
+                if os.path.isfile(temp_dir  + "/maps/" + self.map_name + ".vmf"):
+                    os.remove(temp_dir  + "/maps/" + self.map_name + ".vmf")
 
-            # finally, copy *.vmf to /maps/*.vmf
-            shutil.copy(self.vmf_folder + "/" + self.map_name + ".vmf", self.vmf_folder  + "/maps")
-        
+            # copy *.vmf to temp/maps/*.vmf
+            shutil.copy(self.vmf_folder + "/" + self.map_name + ".vmf", temp_dir + "/maps")
+            
+            self.vmf_folder_to_save = self.vmf_folder
+            self.vmf_folder = temp_dir
+
         else:
             self.vmf_folder = "/".join(self.vmf_folder.split("/")[:-1])
+            self.vmf_folder_to_save = self.vmf_folder
+            print(self.vmf_folder)
 
         # update gui
         self.vmf_label.setText(path)
@@ -105,7 +110,7 @@ class Importer(QMainWindow, Interface):
     def save_to_cfg(self): 
         temp = f"""{self.launch_options}
 {self.csgo_basefolder}
-{self.vmf_folder}"""
+{self.vmf_folder_to_save}"""
         
         with open("cs2importer.cfg", "w") as f:
             f.write(temp)
