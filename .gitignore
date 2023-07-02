@@ -1,4 +1,4 @@
 *.pyc
 *.spec
-build
-dist
+*.bat
+release
