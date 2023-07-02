@@ -66,22 +66,30 @@ class Importer(QMainWindow, Interface):
         
         temp = path.split("/")
         self.map_name = temp.pop().split(".vmf")[0]
-        self.vmf_folder = "/".join(temp) + "/"
+        self.vmf_folder = "/".join(temp)
 
-        if self.vmf_folder.endswith("/maps/"):
-            self.vmf_folder = "/".join(self.vmf_folder.split("/")[:-2])
+        # if path doesnt end with /maps
+        if not self.vmf_folder.endswith("/maps"):
+
+            # check if theres a subfolder that ends with /maps
+            if os.path.exists(self.vmf_folder + "/maps"):
+                print(self.vmf_folder)
+
+                # then delete vmf in /maps if exists, as maybe it isnt the newest ver
+                if os.path.isfile(self.vmf_folder  + "/maps" + self.map_name + ".vmf"):
+                    os.remove(self.vmf_folder  + "/maps" + self.map_name + ".vmf")
+
+            # otherwise (if there isnt a /maps subfolder), create one
+            else:
+                os.mkdir(self.vmf_folder + "/maps")
+
+            # finally, copy *.vmf to /maps/*.vmf
+            shutil.copy(self.vmf_folder + "/" + self.map_name + ".vmf", self.vmf_folder  + "/maps")
+        
         else:
-            maps_dir = f"{self.vmf_folder}/maps/"
+            self.vmf_folder = "/".join(self.vmf_folder.split("/")[:-1])
 
-            try:
-                os.mkdir(maps_dir)
-            except Exception as e:
-                print(e)
-
-            copy_from = self.vmf_folder + self.map_name + ".vmf"
-            shutil.copy(copy_from, maps_dir)
-
-
+        # update gui
         self.vmf_label.setText(path)
         self.vmf_label.setStyleSheet("background-color:rgb(0, 255, 0)")
 
@@ -103,21 +111,13 @@ class Importer(QMainWindow, Interface):
             f.write(temp)
 
     def load_from_cfg(self):
-        try:
-            with open("cs2importer.cfg", "r") as f:
-                temp = f.readlines()
-                print(temp)
-                if not temp:
-                    return
+        if not os.path.isfile("cs2importer.cfg"):
+            open("cs2importer.cfg, w").close()
 
-        except FileNotFoundError:
-            open("cs2importer.cfg", "w")
-            with open("cs2importer.cfg", "r") as f:
-                temp = f.readlines()
-                print(temp)
-                if not temp:
-                    return
-
+        with open("cs2importer.cfg", "r") as f:
+            temp = f.readlines()
+            if not temp:
+                return
 
         self.set_launch_options(temp[0].strip())
         self.set_csgo_folder(temp[1].strip())
@@ -130,13 +130,13 @@ class Importer(QMainWindow, Interface):
 
             cd = self.csgo_basefolder + '/game/csgo/import_scripts'
             command = "python import_map_community.py "
-            command += '"' + self.csgo_basefolder + '/csgo/' + '" '
+            command += '"' + self.csgo_basefolder + '/csgo' + '" '
             command += '"' + self.vmf_folder + '" '
             command += '"' + self.csgo_basefolder + '/game/csgo' + '" '
-            command += '"' + self.addon + '" '
-            command += '"' + self.map_name + '" '
+            command += self.addon + ' '
+            command += self.map_name + ' '
             command += self.launch_options
-
+            command = command.replace("/", "\\")
             print(command)
             subprocess.Popen(command, cwd=cd)
 
