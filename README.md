@@ -15,6 +15,7 @@ While this tools makes the porting process much easier, there's still some work 
 - Make sure your `.vmf` isn't in your `Counter-Strike Global Offensive` folder. It can be anywhere, just not there.
 - If you have any custom content in your map, make sure it's in your CS:GO's materials and models folders. This can be done by decompiling the map and copying the materials and models over.
 - A CS2 addon needs to be created before importing the map.
+- Remove `.decode()` from line 326 of `import_map_community.py` in your CS2 files.
 
 ## Support
 
