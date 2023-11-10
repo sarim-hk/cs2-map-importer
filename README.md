@@ -22,4 +22,3 @@ While this tools makes the porting process much easier, there's still some work 
 
 - Read Valve's documentation [here](https://developer.valvesoftware.com/wiki/Source_2/Docs/Level_Design/Import_Tool_Documentation).
 - Open an issue on GitHub.
-- DM me on Twitter, [@hk_sarim](https://twitter.com/hk_sarim).
