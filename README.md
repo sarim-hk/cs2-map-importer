@@ -19,7 +19,12 @@ While this tools makes the porting process much easier, there's still some work 
 - If you have any custom content in your map, make sure it's in your CS:GO's materials and models folders. This can be done by decompiling the map and copying the materials and models over.
 - A CS2 addon needs to be created before importing the map.
 
+## Video Tutorial
+[![Porting a CS:GO map to CS2](https://img.youtube.com/vi/i4AGxsjsXT4/maxresdefault.jpg)](https://www.youtube.com/watch?v=i4AGxsjsXT4 "Porting a CS:GO map to CS2")
+
 ## Support
 
 - Read Valve's documentation [here](https://developer.valvesoftware.com/wiki/Source_2/Docs/Level_Design/Import_Tool_Documentation).
 - Open an issue on GitHub.
+
+
